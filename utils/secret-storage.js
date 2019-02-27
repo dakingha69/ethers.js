@@ -11,7 +11,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var aes_js_1 = __importDefault(require("aes-js"));
-var scrypt_js_1 = __importDefault(require("scrypt-js"));
+var react_native_scrypt_1 = __importDefault(require("react-native-scrypt"));
 var uuid_1 = __importDefault(require("uuid"));
 var signing_key_1 = require("./signing-key");
 var HDNode = __importStar(require("./hdnode"));
@@ -21,6 +21,11 @@ var pbkdf2_1 = require("./pbkdf2");
 var keccak256_1 = require("./keccak256");
 var utf8_1 = require("./utf8");
 var random_bytes_1 = require("./random-bytes");
+function scrypt(password, salt, dkLen, n, r, p, progressCb) {
+    setTimeout(function () {
+        return react_native_scrypt_1.default(password, salt, n, r, p, dkLen);
+    }, 0);
+}
 function looseArrayify(hexString) {
     if (typeof (hexString) === 'string' && hexString.substring(0, 2) !== '0x') {
         hexString = '0x' + hexString;
@@ -172,7 +177,7 @@ function decrypt(json, password, progressCallback) {
                 if (progressCallback) {
                     progressCallback(0);
                 }
-                scrypt_js_1.default(passwordBytes, salt, N, r, p, 64, function (error, progress, key) {
+                scrypt(passwordBytes, salt, N, r, p, 64, function (error, progress, key) {
                     if (error) {
                         error.progress = progress;
                         reject(error);
@@ -324,7 +329,7 @@ function encrypt(privateKey, password, options, progressCallback) {
         // We take 64 bytes:
         //   - 32 bytes   As normal for the Web3 secret storage (derivedKey, macPrefix)
         //   - 32 bytes   AES key to encrypt mnemonic with (required here to be Ethers Wallet)
-        scrypt_js_1.default(passwordBytes, salt, N, r, p, 64, function (error, progress, key) {
+        scrypt(passwordBytes, salt, N, r, p, 64, function (error, progress, key) {
             if (error) {
                 error.progress = progress;
                 reject(error);

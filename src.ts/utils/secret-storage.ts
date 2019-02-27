@@ -1,7 +1,7 @@
 'use strict';
 
 import aes from 'aes-js';
-import scrypt from 'scrypt-js';
+import RNScrypt from 'react-native-scrypt';
 import uuid from 'uuid';
 
 import { SigningKey } from './signing-key';
@@ -16,7 +16,6 @@ import { randomBytes } from './random-bytes';
 
 // Imported Types
 import { Arrayish } from './bytes';
-
 
 // Exported Types
 export type ProgressCallback = (percent: number) => void;
@@ -34,6 +33,12 @@ export type EncryptOptions = {
        r?: number;
        p?: number;
    }
+}
+
+function scrypt (password: any, salt: any, dkLen: any, n: any, r: any, p: any, progressCb: (error: any, progress: any, key: any) => void) {
+    setTimeout(function() {
+        return RNScrypt(password, salt, n, r, p, dkLen);
+    }, 0);
 }
 
 
