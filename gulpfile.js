@@ -99,6 +99,8 @@ function taskBundle(name, options) {
 
     var transforms = {
 
+        "react-native-scrypt/index.js": empty,
+
         // Remove the precomputed secp256k1 points
         "elliptic/lib/elliptic/precomputed/secp256k1.js": undef,
 
@@ -144,7 +146,9 @@ function taskBundle(name, options) {
             cache: { },
             packageCache: {},
             standalone: "ethers",
-            transform: [ [ createTransform(transforms, show), { global: true } ] ],
+            transform: [
+                [ createTransform(transforms, show), { global: true } ]
+            ],
         })
         .bundle()
         .pipe(source(options.filename))
