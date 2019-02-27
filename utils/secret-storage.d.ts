@@ -1,6 +1,5 @@
 import { SigningKey } from './signing-key';
 import { Arrayish } from './bytes';
-import './react-native-scrypt';
 export declare type ProgressCallback = (percent: number) => void;
 export declare type EncryptOptions = {
     iv?: Arrayish;

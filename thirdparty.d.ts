@@ -1,3 +1,5 @@
+declare module "react-native-scrypt"
+
 declare module "aes-js" {
     export class Counter {
         constructor(iv: Uint8Array);

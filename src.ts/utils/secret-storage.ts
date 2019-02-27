@@ -16,7 +16,6 @@ import { randomBytes } from './random-bytes';
 
 // Imported Types
 import { Arrayish } from './bytes';
-import './react-native-scrypt';
 
 // Exported Types
 export type ProgressCallback = (percent: number) => void;
