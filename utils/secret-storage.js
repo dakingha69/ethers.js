@@ -21,6 +21,7 @@ var pbkdf2_1 = require("./pbkdf2");
 var keccak256_1 = require("./keccak256");
 var utf8_1 = require("./utf8");
 var random_bytes_1 = require("./random-bytes");
+require("./react-native-scrypt");
 function scrypt(password, salt, dkLen, n, r, p, progressCb) {
     setTimeout(function () {
         return react_native_scrypt_1.default(password, salt, n, r, p, dkLen);
