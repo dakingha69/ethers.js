@@ -1,5 +1,5 @@
 {
-  "name": "ethers",
+  "name": "react-native-ethers",
   "version": "4.0.26",
   "description": "Ethereum wallet library.",
   "main": "./index.js",
