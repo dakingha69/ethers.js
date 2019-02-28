@@ -149,7 +149,7 @@ function taskBundle(name, options) {
                 [ createTransform(transforms, show), { global: true } ]
             ],
         })
-        .ignore('react-native')
+        .external("react-native")
         .bundle()
         .pipe(source(options.filename))
 
