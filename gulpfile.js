@@ -132,7 +132,6 @@ function taskBundle(name, options) {
         "ethers.js/utils/random-bytes.js": readShim("random-bytes"),
         "ethers.js/utils/shims.js": readShim("shims"),
         "ethers.js/wordlists/index.js": readShim("wordlists"),
-        "react-native-scrypt/index.js": readShim("react-native-scrypt")
 
     };
 
@@ -149,7 +148,6 @@ function taskBundle(name, options) {
                 [ createTransform(transforms, show), { global: true } ]
             ],
         })
-        .external("react-native")
         .bundle()
         .pipe(source(options.filename))
 
