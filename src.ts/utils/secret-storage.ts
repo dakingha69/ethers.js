@@ -1,7 +1,6 @@
 'use strict';
 
 import aes from 'aes-js';
-import RNScrypt from 'react-native-scrypt';
 import uuid from 'uuid';
 
 import { SigningKey } from './signing-key';
@@ -35,12 +34,7 @@ export type EncryptOptions = {
    }
 }
 
-function scrypt (password: any, salt: any, dkLen: any, n: any, r: any, p: any, progressCb: (error: any, progress: any, key: any) => void) {
-    setTimeout(function() {
-        return RNScrypt(password, salt, n, r, p, dkLen);
-    }, 0);
-}
-
+let scrypt: any = (<any>global).scrypt;
 
 function looseArrayify(hexString: string): Uint8Array {
     if (typeof(hexString) === 'string' && hexString.substring(0, 2) !== '0x') {
@@ -233,13 +227,11 @@ export function decrypt(json: string, password: Arrayish, progressCallback?: Pro
                 }
 
                 if (progressCallback) { progressCallback(0); }
-                scrypt(passwordBytes, salt, N, r, p, 64, function(error, progress, key) {
-                    if (error) {
-                        error.progress = progress;
-                        reject(error);
-
-                    } else if (key) {
-                        key = arrayify(key);
+                const passwordString = String.fromCharCode.apply(null, passwordBytes);
+                const saltArr = Array.from(salt);
+                scrypt(passwordString, saltArr, N, r, p, 64).then(key => {
+                    if (key) {
+                        key = arrayify(`0x${key}`);
 
                         var signingKey = getSigningKey(key, reject);
                         if (!signingKey) { return; }
@@ -247,10 +239,10 @@ export function decrypt(json: string, password: Arrayish, progressCallback?: Pro
                         if (progressCallback) { progressCallback(1); }
                         resolve(signingKey);
 
-                    } else if (progressCallback) {
-                        return progressCallback(progress);
+                    } else {
+                        reject('no key')
                     }
-                });
+                }).catch(e => reject(e));
 
             } else if (kdf.toLowerCase() === 'pbkdf2') {
                 var salt = looseArrayify(searchPath(data, 'crypto/kdfparams/salt'));
@@ -371,17 +363,11 @@ export function encrypt(privateKey: Arrayish | SigningKey, password: Arrayish | 
 
     return new Promise(function(resolve, reject) {
         if (progressCallback) { progressCallback(0); }
-
-        // We take 64 bytes:
-        //   - 32 bytes   As normal for the Web3 secret storage (derivedKey, macPrefix)
-        //   - 32 bytes   AES key to encrypt mnemonic with (required here to be Ethers Wallet)
-        scrypt(passwordBytes, salt, N, r, p, 64, function(error, progress, key) {
-            if (error) {
-                error.progress = progress;
-                reject(error);
-
-            } else if (key) {
-                key = arrayify(key);
+        const passwordString = String.fromCharCode.apply(null, passwordBytes);
+        const saltArr = Array.from(salt);
+        scrypt(passwordString, saltArr, N, r, p, 64).then(key => {
+            if (key) {
+                key = arrayify(`0x${key}`);
 
                 // This will be used to encrypt the wallet (as per Web3 secret storage)
                 var derivedKey = key.slice(0, 16);
@@ -451,10 +437,8 @@ export function encrypt(privateKey: Arrayish | SigningKey, password: Arrayish | 
                 if (progressCallback) { progressCallback(1); }
                 resolve(JSON.stringify(data));
 
-            } else if (progressCallback) {
-                return progressCallback(progress);
             }
-        });
+        }).catch(e => reject(e));
     });
 }
 
